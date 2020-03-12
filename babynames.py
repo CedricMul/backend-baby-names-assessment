@@ -13,7 +13,6 @@
 import sys
 import re
 import argparse
-
 """
 Define the extract_names() function below and change main()
 to call it.
@@ -46,7 +45,23 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
     names = []
-    # +++your code here+++
+    dataLit = r'''<tr align="[a-z]+"><td>(\d+)<\/td><td>([a-zA-Z]+)<\/td><td>([a-zA-Z]+)'''
+    dataGroup = re.compile(dataLit)
+    yearLit = re.compile(r"(\d\d\d\d)")
+    year = yearLit.search(filename)
+    names.append(year.group())
+
+    name_dictionary = {}
+    
+    f = open(filename, 'r')
+    for line in f:
+        x = dataGroup.search(line)
+        if x:
+            name_dictionary[x.group(2)] = x.group(1)
+            name_dictionary[x.group(3)] = x.group(1)
+    
+    for key in sorted(name_dictionary):
+        names.append(key + " " + str(name_dictionary[key]))
     return names
 
 
@@ -81,6 +96,16 @@ def main(args):
     # Use the create_summary flag to decide whether to print the list,
     # or to write the list to a summary file e.g. `baby1990.html.summary`
 
+    for item in file_list:
+        if create_summary:
+            w = open(item + ".txt", 'w')
+            content = extract_names(item)
+            for i in content:
+                w.write(i + "\n")
+        else:
+            content = extract_names(item)
+            for i in content:
+                print(i)
     # +++your code here+++
 
 
